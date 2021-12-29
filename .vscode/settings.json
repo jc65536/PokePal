@@ -1,0 +1,11 @@
+{
+    "sqltools.connections": [
+        {
+            "previewLimit": 50,
+            "driver": "SQLite",
+            "name": "PokePal-users",
+            "database": "${workspaceFolder:PokePal}/fast-backend/users.db"
+        }
+    ],
+    "sqltools.useNodeRuntime": true
+}

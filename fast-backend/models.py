@@ -9,7 +9,7 @@ Base = declarative_base()
 class User(Base):
     __tablename__ = "users"
 
-    username = Column(String, unique=True, index=True)
+    username = Column(String, primary_key=True, index=True)
     password_hash = Column(String)
     logged_in = Column(Boolean, default=False)
     favorite_pkmn = Column(Integer, default=0)
