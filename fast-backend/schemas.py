@@ -12,7 +12,7 @@ class LoginForm(BaseModel):
 
 class User(BaseModel):
     username: str
-    favorite_pkmn: int
+    favorite: int
 
     class Config:
         orm_mode = True

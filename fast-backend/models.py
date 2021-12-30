@@ -12,4 +12,4 @@ class User(Base):
     username = Column(String, primary_key=True, index=True)
     password_hash = Column(String)
     logged_in = Column(Boolean, default=False)
-    favorite_pkmn = Column(Integer, default=0)
+    favorite = Column(Integer, default=0)

@@ -24,11 +24,12 @@ class Form extends React.Component {
     fetch(this.props.url, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
+      credentials: "include",
       body: JSON.stringify({
         "username": this.state.username,
         "password": this.state.password
       })
-    }).then(this.setState({ submitted: true }));
+    }).then(() => this.setState({ submitted: true }));
     event.preventDefault();
   }
 

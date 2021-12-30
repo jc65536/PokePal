@@ -25,21 +25,23 @@ def create_session_token(username: str):
 
 
 def get_current_user(token: str = Depends(session_cookie), db: Session = Depends(db_connect)):
+    forbidden_exception = HTTPException(status.HTTP_403_FORBIDDEN)
+
     try:
         payload = jwt.decode(token, SECRET_KEY,
                              algorithms=[ALGORITHM],
                              options={"verify_exp": False})
     except:
-        return None
+        raise forbidden_exception
 
     user = find_user(db, payload["sub"])
     if user is None or not user.logged_in:
-        return None
+        raise forbidden_exception
 
     exp = datetime.utcfromtimestamp(payload["exp"])
     if exp < datetime.utcnow():
         logout_user(db, user)
-        return None
+        raise forbidden_exception
 
     return user
 
@@ -47,6 +49,7 @@ def get_current_user(token: str = Depends(session_cookie), db: Session = Depends
 @app.post("/login")
 def login(response: Response, form: schemas.LoginForm, db: Session = Depends(db_connect)):
     user: models.User = find_user(db, form.username)
+    
     if user is None:
         raise HTTPException(status.HTTP_403_FORBIDDEN)
 
@@ -62,6 +65,7 @@ def login(response: Response, form: schemas.LoginForm, db: Session = Depends(db_
 @app.post("/register")
 def register(response: Response, form: schemas.LoginForm, db: Session = Depends(db_connect)):
     user: models.User = find_user(db, form.username)
+    
     if user is not None:
         raise HTTPException(status.HTTP_409_CONFLICT)
 
@@ -75,34 +79,25 @@ def register(response: Response, form: schemas.LoginForm, db: Session = Depends(
 
 @app.post("/logout")
 def logout(response: Response, user: models.User = Depends(get_current_user), db: Session = Depends(db_connect)):
-    if user is None or not user.logged_in:
-        raise HTTPException(status.HTTP_409_CONFLICT)
-
     logout_user(db, user)
     response.delete_cookie("session")
     return {"logout": "success"}
 
 
-@app.get("/user", response_model=schemas.User)
+@app.get("/user/profile", response_model=schemas.User)
 def user_profile(user: models.User = Depends(get_current_user)):
-    if user is None:
-        raise HTTPException(status.HTTP_403_FORBIDDEN)
-
     return user
 
 
 @app.post("/user/set-fav")
-def set_pal(user: models.User = Depends(get_current_user), pkmn_id: int = Body(...), db: Session = Depends(db_connect)):
-    if user is None:
-        raise HTTPException(status.HTTP_403_FORBIDDEN)
-
-    user.favorite_pkmn = pkmn_id
+def set_fav(user: models.User = Depends(get_current_user), pkmn_id: int = Body(..., embed=True), db: Session = Depends(db_connect)):
+    user.favorite = pkmn_id
     db.commit()
     return {"set-fav": "success"}
 
 
-@app.get("/search")
-def search(q: Optional[str] = None, gens: Optional[str] = None, types: Optional[str] = None, response_model=schemas.SearchResults):
+@app.get("/search", response_model=schemas.SearchResults)
+def search(q: Optional[str] = None, gens: Optional[str] = None, types: Optional[str] = None):
     if q is None:
         q = ""
 

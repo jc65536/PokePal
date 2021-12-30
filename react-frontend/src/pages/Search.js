@@ -88,6 +88,8 @@ class Search extends React.Component {
     } else if (id == "next" && currentPage < this.state.pageCount - 1) {
       this.setState({ page: currentPage + 1 });
     }
+
+    event.preventDefault();
   }
 
   render() {
@@ -117,9 +119,9 @@ class Search extends React.Component {
           <Checklist id="types" itemNames={this.state.typeNames} onChange={this.handleChecklistChange} labelFormat={titleCase} />
         </form>
         <div id="paginator">
-          <a id="prev" className={this.state.page == 0 ? "disabled" : null} onClick={this.switchPage}>Prev</a>
+          <button id="prev" className={this.state.page == 0 ? "disabled" : null} onClick={this.switchPage}>Prev</button>
           Page {this.state.pageCount == 0 ? 0 : this.state.page + 1} of {this.state.pageCount}
-          <a id="next" className={this.state.page >= this.state.pageCount - 1 ? "disabled" : null} onClick={this.switchPage}>Next</a>
+          <button id="next" className={this.state.page >= this.state.pageCount - 1 ? "disabled" : null} onClick={this.switchPage}>Next</button>
         </div>
         <ul>{resultItems}</ul>
       </div>
