@@ -45,7 +45,7 @@ def get_current_user(token: str = Depends(session_cookie), db: Session = Depends
 
 
 @app.post("/login")
-def login(response: Response, form: schemas.LoginForm = Depends(), db: Session = Depends(db_connect)):
+def login(response: Response, form: schemas.LoginForm, db: Session = Depends(db_connect)):
     user: models.User = find_user(db, form.username)
     if user is None:
         raise HTTPException(status.HTTP_403_FORBIDDEN)
@@ -78,7 +78,7 @@ def logout(response: Response, user: models.User = Depends(get_current_user), db
     if user is None or not user.logged_in:
         raise HTTPException(status.HTTP_409_CONFLICT)
 
-    logout_user(user)
+    logout_user(db, user)
     response.delete_cookie("session")
     return {"logout": "success"}
 
@@ -106,41 +106,43 @@ def autocomplete(q: str, gens: Optional[str] = None, types: Optional[str] = None
     if q == "":
         return []
 
-    pkmn = []
+    def parse_id(url):
+        return int(list(filter("".__ne__, url.split("/")))[-1])
 
-    def match_names(list): return filter(lambda i: q in i["name"], list)
+    def to_set(list):
+        return {(i["name"], parse_id(i["url"])) for i in list}
+    
+    def match_name(list):
+        return filter(lambda i: i["name"].startswith(q), list)
 
-    if gens is None and types is None:
-        # Gets all but the last pokemon
-        res = requests.get(pokeapi("pokemon/?limit=-1")).json()
-        pkmn += res["results"]
-        res = requests.get(pokeapi("pokemon/?offset=" +
-                           str(res["count"] - 1))).json()
-        pkmn += res["results"]
+    # Gets all but the last pokemon
+    res = requests.get(pokeapi("pokemon-species/?limit=-1")).json()
+    results = res["results"]
+    res = requests.get(pokeapi("pokemon-species/?offset=" +
+                       str(res["count"] - 1))).json()
+    results += res["results"]
+
+    results = to_set(match_name(results))
 
     if gens is not None:
         gens = gens.lower().split(",")
+        total_species = []
         for gen in gens:
             res = requests.get(pokeapi("generation/generation-" + gen)).json()
-            species_urls = map(lambda species: species["url"],
-                               match_names(res["pokemon_species"]))
-            for species_url in species_urls:
-                res = requests.get(species_url).json()
-                pkmn += list(map(lambda var: var["pokemon"], res["varieties"]))
+            total_species += res["pokemon_species"]
+        results &= to_set(total_species)
 
     if types is not None:
         types = types.lower().split(",")
+        total_species = []
         for type in types:
             res = requests.get(pokeapi("type/" + type)).json()
-            pkmn += list(map(lambda typepkmn: typepkmn["pokemon"],
-                             res["pokemon_species"]))
+            species = filter(lambda pkmn: parse_id(pkmn["url"]) < 10000,
+                             map(lambda typepkmn: typepkmn["pokemon"], res["pokemon"]))
+            total_species += species
+        results &= to_set(total_species)
 
-    results = list(match_names(pkmn))
-
-    for result in results:
-        url = result["url"]
-        result["id"] = list(filter("".__ne__, url.split("/")))[-1]
-        del result["url"]
+    results = [{"name": name, "id": id} for name, id in results]
 
     return {
         "count": len(results),

@@ -16,7 +16,7 @@ load_dotenv()
 
 SECRET_KEY = os.getenv("SECRET_KEY")
 ALGORITHM = os.getenv("ALGORITHM")
-SESSION_LIFETIME_MIN = 60
+SESSION_LIFETIME_MIN = 10
 
 app = FastAPI()
 

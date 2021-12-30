@@ -1,19 +1,24 @@
 import "./App.css";
-import { LoginForm, SignupForm } from "./Form";
-import { backend } from "./util"
+import {
+  BrowserRouter,
+  Routes,
+  Route
+} from "react-router-dom";
 
-function getUser() {
-  fetch(backend("user"), { credentials: "include"}).then(response => response.json())
-    .then(console.log);
-}
+import Home from "./pages/Home";
+import Profile from "./pages/Profile";
+import { LoginForm, SignupForm } from "./components/AuthForms"
 
 function App() {
   return (
-    <div className="App">
-      <LoginForm />
-      <SignupForm />
-      <button onClick={getUser}>Get user</button>
-    </div>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/user/me" element={<Profile />} />
+        <Route path="/login" element={<LoginForm />} />
+        <Route path="/signup" element={<SignupForm />} />
+      </Routes>
+    </BrowserRouter>
   );
 }
 
