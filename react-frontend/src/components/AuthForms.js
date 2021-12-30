@@ -16,8 +16,8 @@ class Form extends React.Component {
   }
 
   handleChange(event) {
-    const name = event.target.name;
-    this.setState({ [name]: event.target.value });
+    const id = event.target.id;
+    this.setState({ [id]: event.target.value });
   }
 
   handleSubmit(event) {
@@ -29,7 +29,6 @@ class Form extends React.Component {
         "password": this.state.password
       })
     }).then(this.setState({ submitted: true }));
-
     event.preventDefault();
   }
 
@@ -39,10 +38,14 @@ class Form extends React.Component {
 
     return (
       <form onSubmit={this.handleSubmit}>
-        <label htmlFor="username">Username:</label><br />
-        <input name="username" value={this.state.username} onChange={this.handleChange} /><br />
-        <label htmlFor="password">Password:</label><br />
-        <input type="password" name="password" value={this.state.password} onChange={this.handleChange} /><br />
+        <label>
+          Username:
+          <input id="username" value={this.state.username} onChange={this.handleChange} />
+        </label>
+        <label>
+          Password:
+          <input type="password" value={this.state.password} id="password" onChange={this.handleChange} />
+        </label>
         {this.props.children}
       </form>
     );

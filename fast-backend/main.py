@@ -101,19 +101,19 @@ def set_pal(user: models.User = Depends(get_current_user), pkmn_id: int = Body(.
     return {"set-fav": "success"}
 
 
-@app.get("/autocomplete")
-def autocomplete(q: str, gens: Optional[str] = None, types: Optional[str] = None, response_model=schemas.Autocomplete):
-    if q == "":
-        return []
+@app.get("/search")
+def search(q: Optional[str] = None, gens: Optional[str] = None, types: Optional[str] = None, response_model=schemas.SearchResults):
+    if q is None:
+        q = ""
 
     def parse_id(url):
         return int(list(filter("".__ne__, url.split("/")))[-1])
 
     def to_set(list):
-        return {(i["name"], parse_id(i["url"])) for i in list}
-    
+        return {(e["name"], parse_id(e["url"])) for e in list}
+
     def match_name(list):
-        return filter(lambda i: i["name"].startswith(q), list)
+        return filter(lambda e: e["name"].startswith(q), list)
 
     # Gets all but the last pokemon
     res = requests.get(pokeapi("pokemon-species/?limit=-1")).json()

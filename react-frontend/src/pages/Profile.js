@@ -17,7 +17,7 @@ class Profile extends React.Component {
     this.state = {
       authorized: null,
       username: "",
-      favorite_pkmn: 0
+      favoritePkmn: 0
     }
   }
 
