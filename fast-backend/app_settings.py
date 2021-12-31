@@ -30,7 +30,7 @@ session_cookie = APIKeyCookie(name="session", auto_error=False)
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=["http://165.232.139.19:3000"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
