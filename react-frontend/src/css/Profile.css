@@ -1,0 +1,20 @@
+#greeting {
+  margin: 0;
+  text-align: center;
+}
+
+#species-link {
+  width: max-content;
+  align-self: center;
+}
+
+#species-link > h2 {
+  font-size: 1.5rem;
+  text-align: center;
+  font-weight: normal;
+  margin: 0;
+}
+
+#species-link #pkmn-id {
+  font-size: 1.3rem;
+}

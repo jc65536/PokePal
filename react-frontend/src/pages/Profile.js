@@ -1,77 +1,92 @@
 import React from "react";
-import { Navigate } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
 import PokemonDisplay from "../components/PokemonDisplay";
 
-import { backend, pokeapi } from "../util";
-
-function logout() {
-  fetch(backend("logout"), {
-    method: "POST",
-    credentials: "include"
-  });
-}
+import { backend, pokeapi, setTitle, titleCase } from "../util";
+import { AuthContext } from "../AuthContext";
+import "../css/Profile.css";
+import StandardPage from "../components/StandardPage";
 
 class Profile extends React.Component {
+  static contextType = AuthContext;
+  _isMounted = false;
+
   constructor(props) {
     super(props);
     this.state = {
-      authorized: null,
-      user: {},
+      user: {
+        username: "",
+        favorite: 0
+      },
       speciesInfo: {}
     }
   }
 
   componentDidMount() {
-    fetch(backend("user/profile"), { credentials: "include" }).then(res => {
-      if (res.status < 400) {
-        this.setState({ authorized: true });
-        return res.json();
-      } else {
-        this.setState({ authorized: false });
-        return Promise.reject();
-      }
-    }).then(userJson => {
-      this.setState({ user: userJson });
+    this._isMounted = true;
+    setTitle("Me")
 
-      if (userJson["favorite"] == 0)
-        return;
+    if (!this.context.loggedIn)
+      return;
 
-      fetch(pokeapi("pokemon-species/" + userJson["favorite"]))
-        .then(res => res.json())
-        .then(pkmnJson => {
-          const flavorTexts = pkmnJson["flavor_text_entries"].filter(e => e["language"]["name"] == "en");
-          this.setState({
-            speciesInfo: {
-              pkmnId: pkmnJson["id"],
-              flavorText: flavorTexts[flavorTexts.length - 1]["flavor_text"],
-              color: pkmnJson["color"]["name"],
-              varietyUrls: pkmnJson["varieties"].map(e => e["pokemon"]["url"])
-            }
+    fetch(backend("user/profile"), { credentials: "include" })
+      .then(res => res.json())
+      .then(userJson => {
+        if (!this._isMounted)
+          return;
+
+        this.setState({ user: userJson });
+
+        if (userJson["favorite"] == 0)
+          return;
+
+        fetch(pokeapi("pokemon-species/" + userJson["favorite"]))
+          .then(res => res.json())
+          .then(pkmnJson => {
+            if (!this._isMounted)
+              return;
+
+            const flavorTexts = pkmnJson["flavor_text_entries"].filter(e => e["language"]["name"] == "en");
+            this.setState({
+              speciesInfo: {
+                name: pkmnJson["name"],
+                pkmnId: pkmnJson["id"],
+                flavorText: flavorTexts[flavorTexts.length - 1]["flavor_text"],
+                color: pkmnJson["color"]["name"],
+                varietyUrls: pkmnJson["varieties"].map(e => e["pokemon"]["url"])
+              }
+            });
           });
-        });
-    });
+      });
+  }
+
+  componentWillUnmount() {
+    this._isMounted = false;
   }
 
   render() {
-    if (this.state.authorized == null)
-      return null
+    const speciesInfo = this.state.speciesInfo;
 
-    if (!this.state.authorized)
+    if (!this.context.loggedIn)
       return <Navigate to="/login" replace />
 
     let favoriteDisplay;
     if (this.state.user.favorite == 0) {
       favoriteDisplay = <div>You haven't set a favorite yet!</div>
     } else {
-      favoriteDisplay = <PokemonDisplay {...this.state.speciesInfo} />
+      favoriteDisplay = <>
+        <p id="greeting">Your PokePal is waiting for you!</p>
+        <Link to={`/pokemon/${speciesInfo.name}`} id="species-link">
+          <h2>{titleCase(speciesInfo.name)} <span id="pkmn-id">#{speciesInfo.pkmnId}</span></h2>
+        </Link>
+        <PokemonDisplay {...speciesInfo} />
+      </>
     }
 
     return (
-      <div>
-        Hello, {this.state.user.username}!<br />
+      <StandardPage title={`Hello ${this.state.user.username},`} >
         {favoriteDisplay}
-        <button onClick={logout}>Logout</button>
-      </div>
+      </StandardPage>
     );
   }
 }

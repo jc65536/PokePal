@@ -1,0 +1,56 @@
+@import url("colors.css");
+@import url("fonts.css");
+
+* {
+  font-family: "FiraSans";
+}
+
+nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem 0;
+}
+
+nav > ul {
+  margin: 0;
+  padding: 0;
+  display: flex;
+  list-style: none;
+  gap: 2rem;
+  font-size: 1.2rem;
+}
+
+#logo {
+  font-size: 2rem;
+  font-weight: bold;
+  text-decoration: none;
+}
+
+#home-link {
+  text-decoration: none;
+  width: max-content;
+  align-self: center;
+}
+
+#home-link > h2 {
+  font-size: 1.5rem;
+  text-align: center;
+  font-weight: normal;
+  margin: 0;
+}
+
+.page-container {
+  display: flex;
+  flex-direction: column;
+  margin-top: 2rem;
+  margin-bottom: 4rem;
+  gap: 2rem;
+}
+
+.page-title {
+  font-size: 2rem;
+  text-align: center;
+  font-weight: normal;
+  margin: 0;
+}

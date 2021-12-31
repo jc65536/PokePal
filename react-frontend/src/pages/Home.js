@@ -1,10 +1,17 @@
+import { useEffect } from "react";
 import { Link } from "react-router-dom";
+import StandardPage from "../components/StandardPage";
+import { setTitle } from "../util";
 
 function Home() {
+  useEffect(() => {
+    setTitle("");
+  }, []);
+
   return (
-    <div>
-      <Link to="/user/me">My profile</Link>
-    </div>
+    <StandardPage title="Welcome to the world of Pokemon!">
+      <Link to="/search" id="home-link"><h2>Find a PokePal</h2></Link>
+    </StandardPage >
   );
 }
 

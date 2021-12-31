@@ -16,7 +16,7 @@ load_dotenv()
 
 SECRET_KEY = os.getenv("SECRET_KEY")
 ALGORITHM = os.getenv("ALGORITHM")
-SESSION_LIFETIME_MIN = 10
+SESSION_LIFETIME_MIN = 5
 
 app = FastAPI()
 
@@ -24,7 +24,7 @@ models.Base.metadata.create_all(bind=engine)
 
 crypt = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
-session_cookie = APIKeyCookie(name="session")
+session_cookie = APIKeyCookie(name="session", auto_error=False)
 
 app.add_middleware(
     CORSMiddleware,

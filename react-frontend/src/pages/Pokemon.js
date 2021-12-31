@@ -1,14 +1,19 @@
-import { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
-import { backend, pokeapi, titleCase } from "../util";
-import VarietiesGallery from "../components/VarietiesGallery";
+import { useState, useEffect, useContext } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import { backend, pokeapi, titleCase, setTitle } from "../util";
 import PokemonDisplay from "../components/PokemonDisplay";
+import { AuthContext } from "../AuthContext";
+
+import "../css/Pokemon.css";
 
 function Pokemon() {
   const { name } = useParams();
   const [speciesInfo, setSpeciesInfo] = useState({});
+  const auth = useContext(AuthContext);
+  const navigate = useNavigate();
 
   useEffect(() => {
+    setTitle(titleCase(name));
     fetch(pokeapi("pokemon-species/" + name))
       .then(res => res.json())
       .then(json => {
@@ -23,18 +28,24 @@ function Pokemon() {
   }, []);
 
   function setFavorite() {
+    if (!auth.loggedIn) {
+      navigate("/login");
+      return;
+    }
+
     fetch(backend("user/set-fav"), {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       credentials: "include",
       body: JSON.stringify({ "pkmn_id": speciesInfo.pkmnId })
-    });
+    }).then(() => navigate("/user/me"));
   }
 
   return (
-    <div>
+    <div className="page-container">
+      <h1 className="page-title">{titleCase(name)} <span id="pkmn-id">#{speciesInfo.pkmnId}</span></h1>
+      <button id="set-fav-button" onClick={setFavorite}>I choose you!</button>
       <PokemonDisplay {...speciesInfo} />
-      <button onClick={setFavorite}>I choose you</button>
     </div>
   );
 }

@@ -1,10 +1,12 @@
 import React from "react"
 import { Link } from "react-router-dom";
 
-import { backend, pokeapi, titleCase, toParams, uppercase } from "../util";
+import { backend, pokeapi, setTitle, titleCase, toParams, uppercase } from "../util";
 import Checklist from "../components/Checklist";
 
-const RESULTS_PER_PAGE = 20;
+import "../css/Search.css";
+
+const RESULTS_PER_PAGE = 30;
 
 class Search extends React.Component {
   constructor(props) {
@@ -28,6 +30,7 @@ class Search extends React.Component {
   }
 
   componentDidMount() {
+    setTitle("Search");
     fetch(pokeapi("generation"))
       .then(res => res.json())
       .then(json => this.setState({ genNames: json["results"].map(gen => gen["name"].split("-")[1]) }));
@@ -77,6 +80,8 @@ class Search extends React.Component {
   }
 
   switchPage(event) {
+    event.preventDefault();
+
     const id = event.target.id;
     const currentPage = this.state.page;
 
@@ -88,8 +93,6 @@ class Search extends React.Component {
     } else if (id == "next" && currentPage < this.state.pageCount - 1) {
       this.setState({ page: currentPage + 1 });
     }
-
-    event.preventDefault();
   }
 
   render() {
@@ -98,7 +101,7 @@ class Search extends React.Component {
     for (let i = pageStart; i < pageStart + RESULTS_PER_PAGE && i < this.state.count; i++) {
       const result = this.state.results[i];
       resultItems.push(
-        <li key={"result-" + result["name"]}>
+        <li className="result" key={"result-" + result["name"]}>
           <Link to={`/pokemon/${result["name"]}`}>
             <img src={`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${result["id"]}.png`} />
             {titleCase(result["name"])}
@@ -108,22 +111,22 @@ class Search extends React.Component {
     }
 
     return (
-      <div>
+      <div className="page-container">
+        <h1 className="page-title">Search all Pokemon</h1>
         <form onSubmit={this.handleSubmit}>
-          <label>
-            Search
-            <input id="query" value={this.state.query} onChange={this.handleTextChange} />
-          </label>
-          <input type="submit" value="Search"></input>
-          <Checklist id="gens" itemNames={this.state.genNames} onChange={this.handleChecklistChange} labelFormat={uppercase} />
-          <Checklist id="types" itemNames={this.state.typeNames} onChange={this.handleChecklistChange} labelFormat={titleCase} />
+          <div id="search-input-container">
+            <input id="search-input" value={this.state.query} onChange={this.handleTextChange} />
+            <input type="submit" value="Search"></input>
+          </div>
+          <Checklist id="gens" title="Generations" itemNames={this.state.genNames} onChange={this.handleChecklistChange} labelFormat={uppercase} />
+          <Checklist id="types" title="Types" itemNames={this.state.typeNames} onChange={this.handleChecklistChange} labelFormat={titleCase} />
         </form>
         <div id="paginator">
-          <button id="prev" className={this.state.page == 0 ? "disabled" : null} onClick={this.switchPage}>Prev</button>
-          Page {this.state.pageCount == 0 ? 0 : this.state.page + 1} of {this.state.pageCount}
-          <button id="next" className={this.state.page >= this.state.pageCount - 1 ? "disabled" : null} onClick={this.switchPage}>Next</button>
+          <a id="prev" href="#" className={this.state.page == 0 ? "disabled" : null} onClick={this.switchPage}>&lt; Prev</a>
+          <span>Page {this.state.pageCount == 0 ? 0 : this.state.page + 1} of {this.state.pageCount}</span>
+          <a id="next" href="#" className={this.state.page >= this.state.pageCount - 1 ? "disabled" : null} onClick={this.switchPage}>Next &gt;</a>
         </div>
-        <ul>{resultItems}</ul>
+        <ul id="results-container">{resultItems}</ul>
       </div>
     );
   }

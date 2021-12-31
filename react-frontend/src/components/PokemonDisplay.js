@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from "react";
-import VarietiesGallery from "./VarietiesGallery";
-import { pokeapi, titleCase } from "../util";
+import React from "react";
+import { titleCase } from "../util";
+import "../css/Pokemon.css";
 
 class PokemonDisplay extends React.Component {
   constructor(props) {
@@ -32,7 +32,8 @@ class PokemonDisplay extends React.Component {
   render() {
     return (
       <div>
-        <div className="varieties-gallery" >
+        <p id="flavor-text">{this.props.flavorText}</p>
+        <div className={"varieties-gallery " + (this.state.varieties.length == 1 ? "singular" : "")} >
           {this.state.varieties.map(variety =>
             <figure key={variety["name"]}>
               <img src={variety["artUrl"]} />
@@ -40,9 +41,6 @@ class PokemonDisplay extends React.Component {
             </figure>
           )}
         </div>
-        <p>{this.props.flavorText}</p>
-        <p>{this.props.color}</p>
-        <p>{this.props.pkmnId}</p>
       </div>
     );
   }

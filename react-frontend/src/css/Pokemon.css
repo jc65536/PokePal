@@ -1,0 +1,38 @@
+#pkmn-id {
+  font-size: 1.6rem;
+}
+
+#flavor-text {
+  display: block;
+  margin: 0 auto;
+  max-width: 48rem;
+  text-align: center;
+}
+
+#set-fav-button {
+  align-self: center;
+  padding: 0.5rem 0.8rem;
+  cursor: pointer;
+}
+
+.varieties-gallery {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr;
+  grid-auto-flow: row;
+  margin-top: 2rem;
+}
+
+.varieties-gallery.singular {
+  grid-template-columns: 1fr;
+}
+
+.varieties-gallery > figure > * {
+  display: block;
+  margin: auto;
+  text-align: center;
+}
+
+.varieties-gallery img {
+  width: 24rem;
+}

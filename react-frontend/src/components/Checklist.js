@@ -26,17 +26,20 @@ class Checklist extends React.Component {
   render() {
     return (
       <div id={this.props.id} className="checklist">
-        <label>
-          <input value="any" type="checkbox" checked={this.state.checkedItems.length == 0} onChange={this.handleChange} />
-          Any
-        </label>
-        {this.props.itemNames.map(name =>
-          <label key={name}>
-            <input value={name} type="checkbox" onChange={this.handleChange}
-              checked={this.state.checkedItems.includes(name)} />
-            {this.props.labelFormat(name)}
-          </label>
-        )}
+        <span className="checklist-title">{this.props.title}</span>
+        <ul>
+          <li><label>
+            <input value="any" type="checkbox" checked={this.state.checkedItems.length == 0} onChange={this.handleChange} />
+            Any
+          </label></li>
+          {this.props.itemNames.map(name =>
+            <li key={name}><label>
+              <input value={name} type="checkbox" onChange={this.handleChange}
+                checked={this.state.checkedItems.includes(name)} />
+              {this.props.labelFormat(name)}
+            </label></li>
+          )}
+        </ul>
       </div>
     );
   }

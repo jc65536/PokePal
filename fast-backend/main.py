@@ -3,6 +3,7 @@ from typing import Iterable, Optional
 
 from fastapi import Depends, HTTPException, status, Response, Body
 from jose import jwt
+from requests.api import get
 
 from sqlalchemy.orm import Session
 
@@ -25,23 +26,21 @@ def create_session_token(username: str):
 
 
 def get_current_user(token: str = Depends(session_cookie), db: Session = Depends(db_connect)):
-    forbidden_exception = HTTPException(status.HTTP_403_FORBIDDEN)
-
     try:
         payload = jwt.decode(token, SECRET_KEY,
                              algorithms=[ALGORITHM],
                              options={"verify_exp": False})
     except:
-        raise forbidden_exception
+        return None
 
     user = find_user(db, payload["sub"])
     if user is None or not user.logged_in:
-        raise forbidden_exception
+        return None
 
     exp = datetime.utcfromtimestamp(payload["exp"])
     if exp < datetime.utcnow():
         logout_user(db, user)
-        raise forbidden_exception
+        return None
 
     return user
 
@@ -49,7 +48,7 @@ def get_current_user(token: str = Depends(session_cookie), db: Session = Depends
 @app.post("/login")
 def login(response: Response, form: schemas.LoginForm, db: Session = Depends(db_connect)):
     user: models.User = find_user(db, form.username)
-    
+
     if user is None:
         raise HTTPException(status.HTTP_403_FORBIDDEN)
 
@@ -65,7 +64,7 @@ def login(response: Response, form: schemas.LoginForm, db: Session = Depends(db_
 @app.post("/register")
 def register(response: Response, form: schemas.LoginForm, db: Session = Depends(db_connect)):
     user: models.User = find_user(db, form.username)
-    
+
     if user is not None:
         raise HTTPException(status.HTTP_409_CONFLICT)
 
@@ -79,18 +78,32 @@ def register(response: Response, form: schemas.LoginForm, db: Session = Depends(
 
 @app.post("/logout")
 def logout(response: Response, user: models.User = Depends(get_current_user), db: Session = Depends(db_connect)):
+    if user is None:
+        raise HTTPException(status.HTTP_403_FORBIDDEN)
+
     logout_user(db, user)
     response.delete_cookie("session")
     return {"logout": "success"}
 
 
+@app.post("/check-session")
+def check_session(user: models.User = Depends(get_current_user)):
+    return {"logged-in": user is not None}
+
+
 @app.get("/user/profile", response_model=schemas.User)
 def user_profile(user: models.User = Depends(get_current_user)):
+    if user is None:
+        raise HTTPException(status.HTTP_403_FORBIDDEN)
+
     return user
 
 
 @app.post("/user/set-fav")
 def set_fav(user: models.User = Depends(get_current_user), pkmn_id: int = Body(..., embed=True), db: Session = Depends(db_connect)):
+    if user is None:
+        raise HTTPException(status.HTTP_403_FORBIDDEN)
+
     user.favorite = pkmn_id
     db.commit()
     return {"set-fav": "success"}

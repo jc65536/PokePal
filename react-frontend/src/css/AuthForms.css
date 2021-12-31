@@ -1,0 +1,33 @@
+.auth-form {
+  width: max-content;
+  align-self: center;
+}
+
+.auth-form > * + * {
+  margin-top: 1rem;
+}
+
+.auth-form > label {
+  display: block;
+}
+
+.auth-form > label > input {
+  display: block;
+  margin-top: 0.5rem;
+  padding: 0.3rem 0.5rem;
+}
+
+.form-children {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.form-children > * + * {
+  margin-left: 1rem;
+}
+
+.form-children > input {
+  padding: 0.3rem 0.5rem;
+  cursor: pointer;
+}

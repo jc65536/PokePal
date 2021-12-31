@@ -1,15 +1,16 @@
-import React from "react"
+import React, { useContext, useEffect } from "react"
 import { Link, Navigate } from "react-router-dom";
-
-import { backend } from "../util";
+import { AuthContext } from "../AuthContext";
+import "../css/AuthForms.css";
+import { setTitle } from "../util";
+import StandardPage from "./StandardPage";
 
 class Form extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       username: "",
-      password: "",
-      submitted: false
+      password: ""
     };
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -21,53 +22,59 @@ class Form extends React.Component {
   }
 
   handleSubmit(event) {
-    fetch(this.props.url, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      credentials: "include",
-      body: JSON.stringify({
-        "username": this.state.username,
-        "password": this.state.password
-      })
-    }).then(() => this.setState({ submitted: true }));
+    this.props.onSubmit(this.state);
     event.preventDefault();
   }
 
   render() {
-    if (this.state.submitted)
-      return <Navigate to="/user/me" />
-
     return (
-      <form onSubmit={this.handleSubmit}>
-        <label>
-          Username:
-          <input id="username" value={this.state.username} onChange={this.handleChange} />
-        </label>
-        <label>
-          Password:
-          <input type="password" value={this.state.password} id="password" onChange={this.handleChange} />
-        </label>
-        {this.props.children}
-      </form>
+      <AuthContext.Consumer>
+        {auth => {
+          if (auth.loggedIn)
+            return <Navigate to="/user/me" replace />
+
+          return (
+            <form className="auth-form" onSubmit={this.handleSubmit}>
+              <label>
+                Username:
+                <input id="username" value={this.state.username} onChange={this.handleChange} />
+              </label>
+              <label>
+                Password:
+                <input type="password" value={this.state.password} id="password" onChange={this.handleChange} />
+              </label>
+              <div className="form-children">{this.props.children}</div>
+            </form>
+          );
+        }}
+      </AuthContext.Consumer>
     );
   }
 }
 
 function LoginForm() {
+  const auth = useContext(AuthContext);
+
   return (
-    <Form url={backend("login")}>
-      <Link to="/signup">Sign up instead</Link>
-      <input type="submit" value="Login" />
-    </Form>
+    <StandardPage title="Login">
+      <Form onSubmit={auth.login}>
+        <Link to="/signup">Sign up instead</Link>
+        <input type="submit" value="Login" />
+      </Form>
+    </StandardPage>
   );
 }
 
 function SignupForm() {
+  const auth = useContext(AuthContext);
+
   return (
-    <Form url={backend("register")}>
-      <Link to="/login">Log in instead</Link>
-      <input type="submit" value="Sign up" />
-    </Form>
+    <StandardPage title="Sign up">
+      <Form onSubmit={auth.register}>
+        <Link to="/login">Log in instead</Link>
+        <input type="submit" value="Sign up" />
+      </Form>
+    </StandardPage>
   )
 }
 

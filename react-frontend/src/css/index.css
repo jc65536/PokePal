@@ -1,0 +1,11 @@
+body {
+  margin: 0;
+}
+
+#root > * {
+  max-width: 72rem;
+  padding-left: 2rem;
+  padding-right: 2rem;
+  margin-left: auto;
+  margin-right: auto;
+}
