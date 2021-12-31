@@ -59,7 +59,6 @@ class AuthContextProvider extends React.Component {
     });
     if (res.status < 400)
       this.setState({ loggedIn: true });
-
     else
       this.setState({ loggedIn: false });
   }
