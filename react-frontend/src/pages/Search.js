@@ -64,7 +64,7 @@ class Search extends React.Component {
 
   handleSubmit(event) {
     const fullQuery = {
-      "q": this.state.query
+      "q": this.state.query.toLowerCase()
     };
     if (this.state.gens.length > 0)
       fullQuery["gens"] = this.state.gens.join(",");
