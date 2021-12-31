@@ -22,13 +22,15 @@ app = FastAPI()
 
 models.Base.metadata.create_all(bind=engine)
 
+# Used for cryptographic operations like hash
 crypt = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
+# We depend on a session cookie to verify user session
 session_cookie = APIKeyCookie(name="session", auto_error=False)
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"],
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

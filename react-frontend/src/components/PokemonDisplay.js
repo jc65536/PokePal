@@ -14,7 +14,11 @@ class PokemonDisplay extends React.Component {
     if (this.props.varietyUrls == oldProps.varietyUrls)
       return;
 
+    // Holds values that will be populated sometime later by the fetches
     const varietyHolder = Array.apply(null, Array(this.props.varietyUrls.length));
+
+    // We generate a fetch from each item in varietyUrls, then wait for them all
+    // to finish before updating state variable varieties.
     await Promise.all(this.props.varietyUrls.map(async (url, index) =>
       fetch(url).then(res => res.json()).then(json => {
         // No support for forms as of now

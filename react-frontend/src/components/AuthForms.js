@@ -2,7 +2,6 @@ import React, { useContext, useEffect } from "react"
 import { Link, Navigate } from "react-router-dom";
 import { AuthContext } from "../AuthContext";
 import "../css/AuthForms.css";
-import { setTitle } from "../util";
 import StandardPage from "./StandardPage";
 
 class Form extends React.Component {

@@ -1,4 +1,5 @@
-# Pydantic models represent data structures sent to frontend
+# Pydantic schemas (models) are data structures sent/received to/from frontend
+# Not to be confused with SQLAlchemy models
 
 from datetime import datetime
 

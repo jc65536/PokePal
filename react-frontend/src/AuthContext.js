@@ -1,3 +1,9 @@
+/**
+ * AuthContext provides an interface for handling user authentication.
+ * Its loggedIn state is used by other components to determine whether to
+ * display user data or redirect to login.
+ */
+
 import React, { createContext } from "react";
 
 import { backend } from "./util";
@@ -34,7 +40,6 @@ class AuthContextProvider extends React.Component {
   }
 
   componentDidUpdate() {
-    console.log("AuthContext update!");
     localStorage.setItem("loggedIn", this.state.loggedIn);
   }
 
