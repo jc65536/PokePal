@@ -1,14 +1,13 @@
 import React from "react";
-import { Link, Navigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import PokemonDisplay from "../components/PokemonDisplay";
 
 import { backend, pokeapi, setTitle, titleCase } from "../util";
-import { AuthContext } from "../AuthContext";
 import "../css/Profile.css";
-import StandardPage from "../components/StandardPage";
+import Page from "../components/StandardPage";
+import AuthRequired from "../components/AuthRequired";
 
 class Profile extends React.Component {
-  static contextType = AuthContext;
   _isMounted = false;
 
   constructor(props) {
@@ -25,9 +24,6 @@ class Profile extends React.Component {
   componentDidMount() {
     this._isMounted = true;
     setTitle("Me")
-
-    if (!this.context.loggedIn)
-      return;
 
     fetch(backend("user/profile"), { credentials: "include" })
       .then(res => res.json())
@@ -67,9 +63,6 @@ class Profile extends React.Component {
   render() {
     const speciesInfo = this.state.speciesInfo;
 
-    if (!this.context.loggedIn)
-      return <Navigate to="/login" replace />
-
     let favoriteDisplay;
     if (this.state.user.favorite == 0) {
       favoriteDisplay = <div>You haven't set a favorite yet!</div>
@@ -80,13 +73,15 @@ class Profile extends React.Component {
           <h2>{titleCase(speciesInfo.name)} <span id="pkmn-id">#{speciesInfo.pkmnId}</span></h2>
         </Link>
         <PokemonDisplay {...speciesInfo} />
-      </>
+      </>;
     }
 
     return (
-      <StandardPage title={`Hello ${this.state.user.username},`} >
-        {favoriteDisplay}
-      </StandardPage>
+      <AuthRequired>
+        <Page title={`Hello ${this.state.user.username},`} >
+          {favoriteDisplay}
+        </Page>
+      </AuthRequired>
     );
   }
 }

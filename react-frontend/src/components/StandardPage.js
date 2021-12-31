@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { setTitle } from "../util";
 
-function StandardPage({ title, children }) {
+function Page({ title, children }) {
   useEffect(() => {
     setTitle(title);
   }, [title]);
@@ -14,4 +14,4 @@ function StandardPage({ title, children }) {
   );
 }
 
-export default StandardPage;
+export default Page;

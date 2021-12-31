@@ -28,7 +28,7 @@ function Pokemon() {
   }, []);
 
   function setFavorite() {
-    if (!auth.loggedIn) {
+    if (!auth.checkSession()) {
       navigate("/login");
       return;
     }

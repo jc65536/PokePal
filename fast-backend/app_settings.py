@@ -16,7 +16,7 @@ load_dotenv()
 
 SECRET_KEY = os.getenv("SECRET_KEY")
 ALGORITHM = os.getenv("ALGORITHM")
-SESSION_LIFETIME_MIN = 60
+SESSION_LIFETIME_MIN = 0.1
 
 app = FastAPI()
 
@@ -30,7 +30,7 @@ session_cookie = APIKeyCookie(name="session", auto_error=False)
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://165.232.139.19:3000"],
+    allow_origins=["http://localhost:3000"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

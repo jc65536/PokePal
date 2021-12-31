@@ -2,7 +2,7 @@ import React, { useContext, useEffect } from "react"
 import { Link, Navigate } from "react-router-dom";
 import { AuthContext } from "../AuthContext";
 import "../css/AuthForms.css";
-import StandardPage from "./StandardPage";
+import Page from "./StandardPage";
 
 class Form extends React.Component {
   constructor(props) {
@@ -29,7 +29,7 @@ class Form extends React.Component {
     return (
       <AuthContext.Consumer>
         {auth => {
-          if (auth.loggedIn)
+          if (auth.checkSession())
             return <Navigate to="/user/me" replace />
 
           return (
@@ -55,12 +55,12 @@ function LoginForm() {
   const auth = useContext(AuthContext);
 
   return (
-    <StandardPage title="Login">
+    <Page title="Login">
       <Form onSubmit={auth.login}>
         <Link to="/signup">Sign up instead</Link>
         <input type="submit" value="Login" />
       </Form>
-    </StandardPage>
+    </Page>
   );
 }
 
@@ -68,12 +68,12 @@ function SignupForm() {
   const auth = useContext(AuthContext);
 
   return (
-    <StandardPage title="Sign up">
+    <Page title="Sign up">
       <Form onSubmit={auth.register}>
         <Link to="/login">Log in instead</Link>
         <input type="submit" value="Sign up" />
       </Form>
-    </StandardPage>
+    </Page>
   )
 }
 

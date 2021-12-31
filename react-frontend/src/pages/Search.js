@@ -5,6 +5,7 @@ import { backend, pokeapi, setTitle, titleCase, toParams, uppercase } from "../u
 import Checklist from "../components/Checklist";
 
 import "../css/Search.css";
+import Page from "../components/StandardPage";
 
 const RESULTS_PER_PAGE = 30;
 
@@ -30,7 +31,6 @@ class Search extends React.Component {
   }
 
   componentDidMount() {
-    setTitle("Search");
     fetch(pokeapi("generation"))
       .then(res => res.json())
       .then(json => this.setState({ genNames: json["results"].map(gen => gen["name"].split("-")[1]) }));
@@ -111,8 +111,7 @@ class Search extends React.Component {
     }
 
     return (
-      <div className="page-container">
-        <h1 className="page-title">Search all Pokemon</h1>
+      <Page title="Search all Pokemon">
         <form onSubmit={this.handleSubmit}>
           <div id="search-input-container">
             <input id="search-input" value={this.state.query} onChange={this.handleTextChange} />
@@ -127,7 +126,7 @@ class Search extends React.Component {
           <a id="next" href="#" className={this.state.page >= this.state.pageCount - 1 ? "disabled" : null} onClick={this.switchPage}>Next &gt;</a>
         </div>
         <ul id="results-container">{resultItems}</ul>
-      </div>
+      </Page>
     );
   }
 }

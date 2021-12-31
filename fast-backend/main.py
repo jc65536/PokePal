@@ -96,7 +96,7 @@ def logout(response: Response, user: models.User = Depends(get_current_user), db
     return {"logout": "success"}
 
 
-@app.post("/check-session")
+@app.get("/check-session")
 def check_session(response: Response, user: models.User = Depends(get_current_user)):
     if user is not None:
         response.set_cookie("session", create_session_token(user.username))

@@ -1,11 +1,7 @@
 import "./css/App.css";
-import {
-  BrowserRouter,
-  Routes,
-  Route,
-  Link
-} from "react-router-dom";
+import { BrowserRouter, Routes, Route, Link, useLocation } from "react-router-dom";
 
+import Nav from "./components/Nav"
 import Home from "./pages/Home";
 import Profile from "./pages/Profile";
 import { LoginForm, SignupForm } from "./components/AuthForms"
@@ -14,32 +10,13 @@ import Pokemon from "./pages/Pokemon";
 
 import { AuthContext, AuthContextProvider } from "./AuthContext";
 import LogoutButton from "./components/LogoutButton";
+import { useContext, useEffect } from "react";
 
 function App() {
   return (
     <AuthContextProvider>
       <BrowserRouter>
-        <nav>
-          <Link to="/" id="logo">PokePal</Link>
-          <ul>
-            <li><Link to="/search">Find a PokePal</Link></li>
-            <AuthContext.Consumer>
-              {auth => {
-                if (auth.loggedIn) {
-                  return <>
-                    <li><Link to="/user/me">Me</Link></li>
-                    <li><LogoutButton /></li>
-                  </>;
-                } else {
-                  return <>
-                    <li><Link to="/login">Login</Link></li>
-                    <li><Link to="/signup">Sign up</Link></li>
-                  </>;
-                }
-              }}
-            </AuthContext.Consumer>
-          </ul>
-        </nav>
+        <Nav />
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/user/me" element={<Profile />} />
