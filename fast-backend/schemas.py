@@ -18,11 +18,6 @@ class User(BaseModel):
         orm_mode = True
 
 
-class Pokemon(BaseModel):
-    name: str
-    id: int
-
-
 class SearchResults(BaseModel):
     count: int
-    results: list[Pokemon]
+    results: list
