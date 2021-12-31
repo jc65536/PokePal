@@ -1,5 +1,5 @@
 export function backend(endpoint) {
-  return "http://localhost:8000/" + endpoint;
+  return "http://165.232.139.19:3000/" + endpoint;
 }
 
 export function pokeapi(endpoint) {
