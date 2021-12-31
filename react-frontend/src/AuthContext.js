@@ -50,18 +50,18 @@ class AuthContextProvider extends React.Component {
     }).then(() => this.setState({ loggedIn: false }));
   }
 
-  postAuthForm(url, formData) {
-    return fetch(url, {
+  async postAuthForm(url, formData) {
+    const res = await fetch(url, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       credentials: "include",
       body: JSON.stringify(formData)
-    }).then(res => {
-      if (res.status < 400)
-        this.setState({ loggedIn: true });
-      else
-        this.setState({ loggedIn: false });
     });
+    if (res.status < 400)
+      this.setState({ loggedIn: true });
+
+    else
+      this.setState({ loggedIn: false });
   }
 
   login(formData) {
