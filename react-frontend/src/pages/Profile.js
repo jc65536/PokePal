@@ -6,8 +6,10 @@ import { backend, pokeapi, setTitle, titleCase } from "../util";
 import "../css/Profile.css";
 import Page from "../components/StandardPage";
 import AuthRequired from "../components/AuthRequired";
+import { AuthContext } from "../AuthContext";
 
 class Profile extends React.Component {
+  static contextType = AuthContext;
   _isMounted = false;
 
   constructor(props) {
@@ -21,39 +23,37 @@ class Profile extends React.Component {
     }
   }
 
-  componentDidMount() {
+  async componentDidMount() {
     this._isMounted = true;
     setTitle("Me")
 
-    fetch(backend("user/profile"), { credentials: "include" })
-      .then(res => res.json())
-      .then(userJson => {
-        if (!this._isMounted)
-          return;
+    const res = await fetch(backend("user/profile"), { credentials: "include" });
+    const userJson = await res.json();
 
-        this.setState({ user: userJson });
+    if (!this._isMounted)
+      return;
 
-        if (userJson["favorite"] == 0)
-          return;
+    this.setState({ user: userJson });
 
-        fetch(pokeapi("pokemon-species/" + userJson["favorite"]))
-          .then(res => res.json())
-          .then(pkmnJson => {
-            if (!this._isMounted)
-              return;
+    if (userJson["favorite"] == 0)
+      return;
 
-            const flavorTexts = pkmnJson["flavor_text_entries"].filter(e => e["language"]["name"] == "en");
-            this.setState({
-              speciesInfo: {
-                name: pkmnJson["name"],
-                pkmnId: pkmnJson["id"],
-                flavorText: flavorTexts[flavorTexts.length - 1]["flavor_text"],
-                color: pkmnJson["color"]["name"],
-                varietyUrls: pkmnJson["varieties"].map(e => e["pokemon"]["url"])
-              }
-            });
-          });
-      });
+    const res_1 = await fetch(pokeapi("pokemon-species/" + userJson["favorite"]));
+    const pkmnJson = await res_1.json();
+
+    if (!this._isMounted)
+      return;
+
+    const flavorTexts = pkmnJson["flavor_text_entries"].filter(e => e["language"]["name"] == "en");
+    this.setState({
+      speciesInfo: {
+        name: pkmnJson["name"],
+        pkmnId: pkmnJson["id"],
+        flavorText: flavorTexts[flavorTexts.length - 1]["flavor_text"],
+        color: pkmnJson["color"]["name"],
+        varietyUrls: pkmnJson["varieties"].map(e_1 => e_1["pokemon"]["url"])
+      }
+    });
   }
 
   componentWillUnmount() {

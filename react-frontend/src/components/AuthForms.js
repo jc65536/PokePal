@@ -29,7 +29,7 @@ class Form extends React.Component {
     return (
       <AuthContext.Consumer>
         {auth => {
-          if (auth.checkSession())
+          if (auth.loggedIn)
             return <Navigate to="/user/me" replace />
 
           return (

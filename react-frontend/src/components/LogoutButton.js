@@ -1,7 +1,5 @@
 import { useContext } from "react";
-import { Navigate } from "react-router-dom";
 import { AuthContext } from "../AuthContext";
-import { backend } from "../util"
 
 function LogoutButton() {
   const auth = useContext(AuthContext);

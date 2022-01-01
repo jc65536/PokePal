@@ -19,17 +19,18 @@ class PokemonDisplay extends React.Component {
 
     // We generate a fetch from each item in varietyUrls, then wait for them all
     // to finish before updating state variable varieties.
-    await Promise.all(this.props.varietyUrls.map(async (url, index) =>
-      fetch(url).then(res => res.json()).then(json => {
-        // No support for forms as of now
-        const varietyName = titleCase(json["name"].replaceAll("-", " "));
-        const artUrl = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${json["id"]}.png`;
-        varietyHolder[index] = {
-          name: varietyName,
-          artUrl: artUrl
-        };
-      })
-    ));
+    await Promise.all(this.props.varietyUrls.map(async (url, index) => {
+      const res = await fetch(url);
+      const json = await res.json();
+      // No support for forms as of now
+      const varietyName = titleCase(json["name"].replaceAll("-", " "));
+      const artUrl = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${json["id"]}.png`;
+      varietyHolder[index] = {
+        name: varietyName,
+        artUrl: artUrl
+      };
+    }));
+    
     this.setState({ varieties: varietyHolder });
   }
 

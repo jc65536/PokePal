@@ -4,8 +4,8 @@ import { AuthContext } from "../AuthContext";
 
 function AuthRequired({ children }) {
   const auth = useContext(AuthContext);
-  if (!auth.checkSession())
-    return <Navigate to="/login" replace />;
+  if (!auth.loggedIn)
+    return < Navigate to="/login" replace />;
 
   return <>{children}</>;
 }

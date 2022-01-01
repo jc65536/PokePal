@@ -9,25 +9,26 @@ import Search from "./pages/Search"
 import Pokemon from "./pages/Pokemon";
 
 import { AuthContext, AuthContextProvider } from "./AuthContext";
-import LogoutButton from "./components/LogoutButton";
 import { useContext, useEffect } from "react";
 
 function App() {
-  return (
-    <AuthContextProvider>
-      <BrowserRouter>
-        <Nav />
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/user/me" element={<Profile />} />
-          <Route path="/login" element={<LoginForm />} />
-          <Route path="/signup" element={<SignupForm />} />
-          <Route path="/search" element={<Search />} />
-          <Route path="/pokemon/:name" element={<Pokemon />} />
-        </Routes>
-      </BrowserRouter>
-    </AuthContextProvider>
-  );
+  const auth = useContext(AuthContext);
+  const location = useLocation();
+
+  // Check session on location change (which simulates a page load)
+  useEffect(auth.checkSession, [location]);
+
+  return <>
+    <Nav />
+    <Routes>
+      <Route path="/" element={<Home />} />
+      <Route path="/user/me" element={<Profile />} />
+      <Route path="/login" element={<LoginForm />} />
+      <Route path="/signup" element={<SignupForm />} />
+      <Route path="/search" element={<Search />} />
+      <Route path="/pokemon/:name" element={<Pokemon />} />
+    </Routes>
+  </>;
 }
 
 export default App;
