@@ -24,7 +24,7 @@ class PokemonDisplay extends React.Component {
       const json = await res.json();
       // No support for forms as of now
       const varietyName = titleCase(json["name"].replaceAll("-", " "));
-      const artUrl = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${json["id"]}.png`;
+      const artUrl = json["sprites"]["other"]["official-artwork"]["front_default"];
       varietyHolder[index] = {
         name: varietyName,
         artUrl: artUrl
