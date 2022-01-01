@@ -103,8 +103,10 @@ class Search extends React.Component {
       resultItems.push(
         <li className="result" key={"result-" + result["name"]}>
           <Link to={`/pokemon/${result["name"]}`}>
-            <img src={`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${result["id"]}.png`} />
-            {titleCase(result["name"])}
+            <figure>
+              <img src={`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${result["id"]}.png`} />
+              <figcaption>{titleCase(result["name"])}</figcaption>
+            </figure>
           </Link>
         </li>
       );
@@ -115,10 +117,12 @@ class Search extends React.Component {
         <form onSubmit={this.handleSubmit}>
           <div id="search-input-container">
             <input id="search-input" value={this.state.query} onChange={this.handleTextChange} />
-            <input type="submit" value="Search"></input>
+            <input id="search-submit" type="submit" value="Search"></input>
           </div>
-          <Checklist id="gens" title="Generations" itemNames={this.state.genNames} onChange={this.handleChecklistChange} labelFormat={uppercase} />
-          <Checklist id="types" title="Types" itemNames={this.state.typeNames} onChange={this.handleChecklistChange} labelFormat={titleCase} />
+          <div id="checklist-container">
+            <Checklist id="gens" title="Generations" itemNames={this.state.genNames} onChange={this.handleChecklistChange} labelFormat={uppercase} />
+            <Checklist id="types" title="Types" itemNames={this.state.typeNames} onChange={this.handleChecklistChange} labelFormat={titleCase} />
+          </div>
         </form>
         <div id="paginator">
           <a id="prev" href="#" className={this.state.page == 0 ? "disabled" : null} onClick={this.switchPage}>&lt; Prev</a>
