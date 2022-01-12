@@ -1,3 +1,3 @@
 #!/bin/bash
-source "../env/bin/activate"
+. "../env/bin/activate"
 uvicorn main:app --host 0.0.0.0 --port 8000
