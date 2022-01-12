@@ -1,7 +1,7 @@
 # Routes for my backend API
 
 from datetime import datetime, timedelta
-from typing import Iterable, Optional
+from typing import Optional
 
 from fastapi import Depends, HTTPException, status, Response, Body
 from jose import jwt

@@ -1,7 +1,7 @@
 import React from "react"
 import { Link } from "react-router-dom";
 
-import { backend, pokeapi, setTitle, titleCase, toParams, uppercase } from "../util";
+import { backend, pokeapi, titleCase, toParams, uppercase } from "../util";
 import Checklist from "../components/Checklist";
 
 import "../css/Search.css";

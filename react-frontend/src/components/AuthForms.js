@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from "react"
+import React, { useContext } from "react"
 import { Link, Navigate } from "react-router-dom";
 import { AuthContext } from "../AuthContext";
 import "../css/AuthForms.css";

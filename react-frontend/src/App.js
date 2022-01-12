@@ -1,5 +1,5 @@
 import "./css/App.css";
-import { BrowserRouter, Routes, Route, Link, useLocation } from "react-router-dom";
+import { Routes, Route, useLocation } from "react-router-dom";
 
 import Nav from "./components/Nav"
 import Home from "./pages/Home";
@@ -8,7 +8,7 @@ import { LoginForm, SignupForm } from "./components/AuthForms"
 import Search from "./pages/Search"
 import Pokemon from "./pages/Pokemon";
 
-import { AuthContext, AuthContextProvider } from "./AuthContext";
+import { AuthContext } from "./AuthContext";
 import { useContext, useEffect } from "react";
 
 function App() {
